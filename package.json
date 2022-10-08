@@ -16,6 +16,10 @@
     "generate-types": "yarn typechain --target ethers-v5 --out-dir src/contracts/typechain src/contracts/abis/*.json"
   },
   "dependencies": {
+    "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/bytes": "^5.7.0",
+    "@ethersproject/providers": "^5.7.1",
+    "@ethersproject/units": "^5.7.0",
     "axios": "^1.1.0",
     "coingecko-api": "^1.0.10",
     "dayjs": "^1.11.5",
