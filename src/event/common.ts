@@ -99,7 +99,7 @@ export async function BroadCast<T extends BaseEvent>(
       }
     }
     if (post != '') {
-      await SendTweet(post, twitterClient)
+      await PostTelegram(post, telegramClient)
     }
   }
 
