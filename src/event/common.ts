@@ -1,4 +1,4 @@
-import { Client } from 'discord.js'
+import { Client, EmbedBuilder } from 'discord.js'
 import { Telegraf, Context } from 'telegraf'
 import { Update } from 'telegraf/typings/core/types/typegram'
 import { TwitterApi } from 'twitter-api-v2'
@@ -15,8 +15,10 @@ import {
   DISCORD_ENABLED,
   DISCORD_THRESHOLD,
 } from '../secrets'
-import { BaseEvent, EventDto } from '../types/EventDto'
+import { BaseEvent, EventDto, VaultDto, VaultsDto } from '../types/EventDto'
 import { DepositTwitter, DepositTelegram, DepositDiscord } from '../templates/deposit'
+import { VaultStatsDiscord, VaultStatsTwitter } from '../templates/vaultStats'
+import { VaultYieldDiscord, VaultYieldTelegram, VaultYieldTwitter } from '../templates/vaultYield'
 
 export function getPrice(coingeckoId: string): number {
   console.log(coingeckoId)
@@ -51,22 +53,81 @@ export async function BroadCast<T extends BaseEvent>(
   telegramClient: Telegraf<Context<Update>>,
   discordClient: Client<boolean>,
 ): Promise<void> {
-  if (TWITTER_ENABLED && dto.value >= TWITTER_THRESHOLD) {
+  if (TWITTER_ENABLED) {
     let post = ''
-    if (dto.eventType == EventType.Deposit) {
-      post = DepositTwitter(dto as unknown as EventDto)
+
+    //YIELD
+    if (dto.eventType === EventType.VaultYield) {
+      post = VaultYieldTwitter(dto as unknown as VaultsDto)
     }
-    await SendTweet(post, twitterClient)
+
+    //STATS
+    if (dto.eventType === EventType.VaultStats) {
+      post = VaultStatsTwitter(dto as unknown as VaultDto)
+    }
+
+    //DEPOSITS
+    if (dto.value >= TWITTER_THRESHOLD) {
+      if (dto.eventType == EventType.Deposit) {
+        post = DepositTwitter(dto as unknown as EventDto)
+      }
+    }
+
+    if (post != '') {
+      console.log(post)
+      await SendTweet(post, twitterClient)
+    }
   }
 
-  if (TELEGRAM_ENABLED && dto.value >= TELEGRAM_THRESHOLD) {
-    const post = DepositTelegram(dto as unknown as EventDto)
-    await PostTelegram(post, telegramClient)
+  if (TELEGRAM_ENABLED) {
+    //YIELD
+    let post = ''
+
+    if (dto.eventType === EventType.VaultYield) {
+      post = VaultYieldTelegram(dto as unknown as VaultsDto)
+    }
+
+    //STATS
+    if (dto.eventType === EventType.VaultStats) {
+      //  post = VaultStatsDiscord(dto as unknown as VaultDto)
+    }
+
+    // DEPOSITS
+    if (dto.eventType === EventType.Deposit) {
+      if (dto.value >= TELEGRAM_THRESHOLD) {
+        post = DepositTelegram(dto as unknown as EventDto)
+      }
+    }
+    if (post != '') {
+      await SendTweet(post, twitterClient)
+    }
   }
 
-  if (DISCORD_ENABLED && dto.value >= DISCORD_THRESHOLD) {
-    const embed = [DepositDiscord(dto as unknown as EventDto)]
-    const channel = dto.eventType === EventType.Deposit ? DiscordChannels.Deposit : DiscordChannels.Withdrawal
-    await PostDiscord(embed, discordClient, channel)
+  if (DISCORD_ENABLED) {
+    let embed: EmbedBuilder[] = []
+    let channel = ''
+
+    //YIELD
+    if (dto.eventType === EventType.VaultYield) {
+      channel = DiscordChannels.Vaults
+      embed = [VaultYieldDiscord(dto as unknown as VaultsDto)]
+    }
+
+    //STATS
+    if (dto.eventType === EventType.VaultStats) {
+      channel = DiscordChannels.Vaults
+      embed = [VaultStatsDiscord(dto as unknown as VaultDto)]
+    }
+
+    //DEPOSITS
+    if (dto.eventType === EventType.Deposit) {
+      if (dto.value >= DISCORD_THRESHOLD) {
+        embed = [DepositDiscord(dto as unknown as EventDto)]
+        channel = dto.eventType === EventType.Deposit ? DiscordChannels.Deposit : DiscordChannels.Withdrawal
+      }
+    }
+    if (embed.length > 0) {
+      await PostDiscord(embed, discordClient, channel)
+    }
   }
 }

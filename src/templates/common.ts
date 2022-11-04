@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import dayjsPluginUTC from 'dayjs/plugin/utc'
+import _ from 'lodash'
 
 export function EtherScanUrl() {
   return 'https://optimistic.etherscan.io'
@@ -12,6 +13,24 @@ export function FN(value: number, decimals: number) {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   })
+}
+
+export function emoji(vaultId: string) {
+  if (vaultId === 'ETH_PUT_SELLING') {
+    return '🐂'
+  }
+  if (vaultId === 'ETH_CALL_SELLING') {
+    return '🐻'
+  }
+  if (vaultId === 'ETH_CALL_SELLING_QUOTE') {
+    return '🐻‍❄️'
+  }
+
+  return ''
+}
+
+export function vaultName(vaultId: string) {
+  return `${emoji(vaultId)} s${_.startCase(vaultId.replace(/_/g, ' '))}`
 }
 
 export function FNS(value: number, decimals: number) {

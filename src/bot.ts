@@ -13,6 +13,7 @@ import RpcClient from './clients/client'
 import { GetApiData } from './integrations/contracts'
 import { GetPrices } from './integrations/coingecko'
 import { ScheduledJobs } from './schedule'
+import { TrackYield, TrackStats } from './event/vault'
 
 let discordClient: Client<boolean>
 let twitterClient: TwitterApi
@@ -20,25 +21,23 @@ let telegramClient: Telegraf<Context<Update>>
 
 export async function goBot() {
   const rpcClient = new RpcClient(optimismInfuraProvider)
-  await InitGlobals()
-  await InitClients()
+  await Promise.all([InitGlobals(), InitClients()])
+  await TrackYield(discordClient, telegramClient, twitterClient)
+  //await TrackStats(discordClient, telegramClient, twitterClient)
 
   await TrackEvents(discordClient, telegramClient, twitterClient, rpcClient)
-  ScheduledJobs()
+  ScheduledJobs(discordClient, telegramClient, twitterClient)
 }
 
 async function InitGlobals() {
   global.ENS = {}
   global.VAULT_ADDRESSES = []
   global.TOKEN_PRICES = {}
-  await GetPrices()
-  await GetApiData()
+  await Promise.all([GetPrices(), GetApiData()])
 }
 
 async function InitClients() {
-  await SetUpDiscord()
-  await SetUpTwitter()
-  await SetUpTelegram()
+  await Promise.all([SetUpDiscord(), SetUpTwitter(), SetUpTelegram()])
 }
 
 export async function SetUpDiscord() {
@@ -47,8 +46,7 @@ export async function SetUpDiscord() {
     discordClient.on('ready', async (client) => {
       console.debug('Discord bot is online!')
     })
-    await discordClient.login(DISCORD_ACCESS_TOKEN)
-    defaultActivity(discordClient)
+    Promise.all([discordClient.login(DISCORD_ACCESS_TOKEN), defaultActivity(discordClient)])
   }
 }
 

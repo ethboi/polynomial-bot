@@ -19,3 +19,22 @@ export type EventDto = BaseEvent & {
   ens: string
   vault: Vault
 }
+
+export type VaultsDto = BaseEvent & {
+  vaults: Vault[]
+}
+
+export type VaultDto = BaseEvent & {
+  vault: Vault
+  asset: string
+  decimals: number
+  price: number
+  totalFunds: number
+  totalFundsValue: number
+  usedFunds: number
+  totalPremiumCollected: number
+  usedFundsValue: number
+  collateralizationRatio: number
+  totalQueuedDeposits: number
+  totalQueuedWithdrawals: number
+}
