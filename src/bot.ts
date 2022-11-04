@@ -22,7 +22,7 @@ let telegramClient: Telegraf<Context<Update>>
 export async function goBot() {
   const rpcClient = new RpcClient(optimismInfuraProvider)
   await Promise.all([InitGlobals(), InitClients()])
-  await TrackYield(discordClient, telegramClient, twitterClient)
+  //await TrackYield(discordClient, telegramClient, twitterClient)
   //await TrackStats(discordClient, telegramClient, twitterClient)
 
   await TrackEvents(discordClient, telegramClient, twitterClient, rpcClient)
