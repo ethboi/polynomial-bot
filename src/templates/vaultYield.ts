@@ -17,7 +17,7 @@ export function VaultYieldDiscord(dto: VaultsDto): EmbedBuilder {
     embed.addFields({
       name: `${vaultName(vault.vaultId)}`,
       value: `> 🔹 *APR* **${FN((vault.averageApy as unknown as number) * 100, 2)}%**\n> 🔹 *Last Week* **${FN(
-        Number(vault.lastWeekApy) as number,
+        (Number(vault.lastWeekApy) as number) * 100,
         2,
       )}%**\n> 🔸 [deposit into vault](${ProductLink(vault.vaultId)})`,
       inline: false,
@@ -33,7 +33,7 @@ export function VaultYieldTelegram(dto: VaultsDto) {
   dto.vaults.map((vault) => {
     post.push(
       `${vaultName(vault.vaultId)}:\n🔹 ${FN((vault.averageApy as unknown as number) * 100, 2)}% (Last Week: ${FN(
-        Number(vault.lastWeekApy) as number,
+        (Number(vault.lastWeekApy) as number) * 100,
         2,
       )}%)\n\n`,
     )
@@ -47,7 +47,7 @@ export function VaultYieldTwitter(dto: VaultsDto) {
   dto.vaults.map((vault) => {
     post.push(
       `${vaultName(vault.vaultId)}:\n🔹 ${FN((vault.averageApy as unknown as number) * 100, 2)}% (Last Week: ${FN(
-        Number(vault.lastWeekApy) as number,
+        (Number(vault.lastWeekApy) as number) * 100,
         2,
       )}%)\n\n`,
     )
