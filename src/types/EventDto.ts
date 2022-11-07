@@ -14,10 +14,10 @@ export type EventDto = BaseEvent & {
   contractAddress: string
   image: string | null
   blockNumber: number
-  timestamp: Date
   price: number
   ens: string
   vault: Vault
+  isZap: boolean
 }
 
 export type VaultsDto = BaseEvent & {

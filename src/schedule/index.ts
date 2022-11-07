@@ -16,8 +16,8 @@ export function ScheduledJobs(
     await GetPrices()
   })
 
-  // Monday / Wednesday / Friday (as this resets each build)
-  scheduleJob('0 0 * * 1,3,5', async () => {
+  // Friday (as this resets each build) // 2pm FRIDAYS
+  scheduleJob('0 14 * * 5', async () => {
     await GetApiData()
     await TrackYield(discordClient, telegramClient, twitterClient)
   })

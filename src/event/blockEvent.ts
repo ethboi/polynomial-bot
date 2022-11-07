@@ -20,19 +20,19 @@ export async function TrackEvents(
   let pollInterval = 60000
   if (TESTNET) {
     blockNumber = rpcClient.provider.blockNumber - 30000
-    pollInterval = 10000
+    pollInterval = 1000
   }
   BlockEvent.on(
     rpcClient,
     async (event) => {
       if (event.topics[0].toLowerCase() === PROCESS_DEPOSIT) {
-        await TrackDeposits(discordClient, telegramClient, twitterClient, rpcClient, event)
+        await TrackDeposits(discordClient, telegramClient, twitterClient, event)
       }
       if (
         event.topics[0].toLowerCase() == PROCESS_WITHDRAWAL ||
         event.topics[0].toLowerCase() == PROCESS_WITHDRAWAL_PARTIALLY
       ) {
-        await TrackWithdraws(discordClient, telegramClient, twitterClient, rpcClient, event)
+        await TrackWithdraws(discordClient, telegramClient, twitterClient, event)
       }
     },
     {

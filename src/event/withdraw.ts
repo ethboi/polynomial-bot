@@ -7,18 +7,15 @@ import { EventType } from '../constants/eventType'
 import { GetEns } from '../integrations/ens'
 import { EventDto } from '../types/EventDto'
 import fromBigNumber from '../utils/fromBigNumber'
-import { toDate } from '../utils/utils'
 import { Event as GenericEvent } from 'ethers'
 import { ProcessWithdrawalEvent } from '../contracts/typechain/V2'
 import { V2__factory } from '../contracts/typechain/factories'
-import RpcClient from '../clients/client'
 import { TOKENS } from '../constants/tokenIds'
 
 export async function TrackWithdraws(
   discordClient: Client<boolean>,
   telegramClient: Telegraf<Context<Update>>,
   twitterClient: TwitterApi,
-  rpcClient: RpcClient,
   genericEvent: GenericEvent,
 ): Promise<void> {
   const event = parseEvent(genericEvent as ProcessWithdrawalEvent)
@@ -43,13 +40,6 @@ export async function TrackWithdraws(
   console.log(`Withdraw Value: ${value}`)
 
   try {
-    let timestamp = 0
-    try {
-      timestamp = (await rpcClient.provider.getBlock(event.blockNumber)).timestamp
-    } catch (ex) {
-      console.log(ex)
-    }
-
     const dto: EventDto = {
       eventType: EventType.CompleteWithdraw,
       user: event.args.user,
@@ -60,10 +50,10 @@ export async function TrackWithdraws(
       vault: vault,
       image: getImage(vault.vaultId),
       blockNumber: event.blockNumber,
-      timestamp: toDate(timestamp),
       price: price,
       value: value,
       ens: await GetEns(event.args.user),
+      isZap: false,
     }
     await BroadCast(dto, twitterClient, telegramClient, discordClient)
   } catch (ex) {

@@ -19,6 +19,7 @@ import { BaseEvent, EventDto, VaultDto, VaultsDto } from '../types/EventDto'
 import { DepositTwitter, DepositTelegram, DepositDiscord } from '../templates/deposit'
 import { VaultStatsDiscord, VaultStatsTwitter } from '../templates/vaultStats'
 import { VaultYieldDiscord, VaultYieldTelegram, VaultYieldTwitter } from '../templates/vaultYield'
+import { media } from '../constants/twitter'
 
 export function getPrice(coingeckoId: string): number {
   console.log(coingeckoId)
@@ -55,9 +56,11 @@ export async function BroadCast<T extends BaseEvent>(
 ): Promise<void> {
   if (TWITTER_ENABLED) {
     let post = ''
+    let mediaId: string | undefined
 
     //YIELD
     if (dto.eventType === EventType.VaultYield) {
+      mediaId = media.weeklyAPR
       post = VaultYieldTwitter(dto as unknown as VaultsDto)
     }
 
@@ -74,8 +77,7 @@ export async function BroadCast<T extends BaseEvent>(
     }
 
     if (post != '') {
-      console.log(post)
-      await SendTweet(post, twitterClient)
+      await SendTweet(post, mediaId, twitterClient)
     }
   }
 
@@ -120,7 +122,7 @@ export async function BroadCast<T extends BaseEvent>(
     }
 
     //DEPOSITS
-    if (dto.eventType === EventType.Deposit) {
+    if (dto.eventType === EventType.Deposit || dto.eventType == EventType.CompleteWithdraw) {
       if (dto.value >= DISCORD_THRESHOLD) {
         embed = [DepositDiscord(dto as unknown as EventDto)]
         channel = dto.eventType === EventType.Deposit ? DiscordChannels.Deposit : DiscordChannels.Withdrawal

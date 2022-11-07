@@ -1,5 +1,5 @@
 export enum DiscordChannels {
   Deposit = '🟢｜deposit',
   Withdrawal = '🔴｜withdraw',
-  Vaults = '🏦-vaults',
+  Vaults = '⚪｜vault-yields',
 }

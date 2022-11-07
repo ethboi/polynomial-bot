@@ -30,7 +30,14 @@ export function emoji(vaultId: string) {
 }
 
 export function vaultName(vaultId: string) {
-  return `${emoji(vaultId)} s${_.startCase(vaultId.replace(/_/g, ' '))}`
+  const cased = _.startCase(_.lowerCase(vaultId.replace(/_/g, ' ')))
+  return `${emoji(vaultId)} s${cased}`
+}
+
+export function WeeklyPercent(apr: number) {
+  // vault APR
+  // raise to 1/52 power -  compounded weekly
+  return (Math.pow(Number(apr) + 1, 1 / 52) - 1) * 100
 }
 
 export function FNS(value: number, decimals: number) {
