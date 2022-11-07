@@ -83,8 +83,10 @@ export async function BroadCast<T extends BaseEvent>(
   if (TELEGRAM_ENABLED) {
     //YIELD
     let post = ''
+    let disablePreview = true
 
     if (dto.eventType === EventType.VaultYield) {
+      disablePreview = false
       post = VaultYieldTelegram(dto as unknown as VaultsDto)
     }
 
@@ -100,7 +102,7 @@ export async function BroadCast<T extends BaseEvent>(
       }
     }
     if (post != '') {
-      await PostTelegram(post, telegramClient)
+      await PostTelegram(post, disablePreview, telegramClient)
     }
   }
 

@@ -7,6 +7,7 @@ export async function PostDiscord(embeds: EmbedBuilder[], client: Client<boolean
     printObject(embeds)
   } else {
     try {
+      //printObject(client.channels.cache)
       const channels = client.channels.cache
         .filter((value) => (value as TextChannel)?.name == channelName)
         .map(async (channel) => {
