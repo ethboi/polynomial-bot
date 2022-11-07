@@ -4,7 +4,6 @@ export async function GetEns(traderAddress: string | undefined): Promise<string>
   if (traderAddress == undefined) {
     return ''
   }
-  console.debug(`Getting ens for ${traderAddress}`)
   const found = global.ENS[traderAddress.toLowerCase()]
 
   if (found || found === '') {

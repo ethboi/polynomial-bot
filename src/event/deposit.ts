@@ -8,9 +8,10 @@ import { GetEns } from '../integrations/ens'
 import { EventDto } from '../types/EventDto'
 import fromBigNumber from '../utils/fromBigNumber'
 import { Event as GenericEvent } from 'ethers'
-import { ProcessDepositEvent } from '../contracts/typechain/V2'
+import { InitiateDepositEvent } from '../contracts/typechain/V2'
 import { V2__factory } from '../contracts/typechain/factories'
 import { TOKENS } from '../constants/tokenIds'
+import { ZAPPER_ADDRESS } from '../constants/zapper'
 
 export async function TrackDeposits(
   discordClient: Client<boolean>,
@@ -18,7 +19,7 @@ export async function TrackDeposits(
   twitterClient: TwitterApi,
   genericEvent: GenericEvent,
 ): Promise<void> {
-  const event = parseEvent(genericEvent as ProcessDepositEvent)
+  const event = parseEvent(genericEvent as InitiateDepositEvent)
   const vault = VAULTS.find((v) => v.vaultAddress.toLowerCase() == event.address.toLowerCase())
 
   if (!vault) {
@@ -36,10 +37,10 @@ export async function TrackDeposits(
   const price = getPrice(depositToken[0] as string)
   const amt = fromBigNumber(event.args.amount)
   const value = price * amt
-
-  console.log(`Deposit Value: ${value}`)
+  const isZap = event.args.depositor.toLowerCase() == ZAPPER_ADDRESS
 
   try {
+    console.log(`Deposit Value: ${value}`)
     const dto: EventDto = {
       eventType: EventType.Deposit,
       user: event.args.user,
@@ -53,7 +54,7 @@ export async function TrackDeposits(
       price: price,
       value: value,
       ens: await GetEns(event.args.user),
-      isZap: false,
+      isZap: isZap,
     }
     await BroadCast(dto, twitterClient, telegramClient, discordClient)
   } catch (ex) {
@@ -61,11 +62,11 @@ export async function TrackDeposits(
   }
 }
 
-export function parseEvent(event: ProcessDepositEvent): ProcessDepositEvent {
+export function parseEvent(event: InitiateDepositEvent): InitiateDepositEvent {
   const parsedEvent = V2__factory.createInterface().parseLog(event)
 
-  if ((parsedEvent.args as ProcessDepositEvent['args']).length > 0) {
-    event.args = parsedEvent.args as ProcessDepositEvent['args']
+  if ((parsedEvent.args as InitiateDepositEvent['args']).length > 0) {
+    event.args = parsedEvent.args as InitiateDepositEvent['args']
   }
   return event
 }

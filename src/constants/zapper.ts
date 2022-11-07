@@ -1,0 +1,1 @@
+export const ZAPPER_ADDRESS = '0xb162f01c5bda7a68292410aaa059e7ce28d77c82'

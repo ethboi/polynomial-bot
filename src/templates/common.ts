@@ -34,6 +34,11 @@ export function vaultName(vaultId: string) {
   return `${emoji(vaultId)} s${cased}`
 }
 
+export function vaultNameNoEmoji(vaultId: string) {
+  const cased = _.startCase(_.lowerCase(vaultId.replace(/_/g, ' ')))
+  return `s${cased}`
+}
+
 export function WeeklyPercent(apr: number) {
   // vault APR
   // raise to 1/52 power -  compounded weekly

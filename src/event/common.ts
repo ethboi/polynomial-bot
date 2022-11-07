@@ -22,7 +22,6 @@ import { VaultYieldDiscord, VaultYieldTelegram, VaultYieldTwitter } from '../tem
 import { media } from '../constants/twitter'
 
 export function getPrice(coingeckoId: string): number {
-  console.log(coingeckoId)
   const price = TOKEN_PRICES[coingeckoId] as unknown as number
   return price
 }
