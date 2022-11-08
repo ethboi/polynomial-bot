@@ -96,7 +96,7 @@ export async function BroadCast<T extends BaseEvent>(
     }
 
     // DEPOSITS
-    if (dto.eventType === EventType.Deposit) {
+    if (dto.eventType === EventType.Deposit || dto.eventType == EventType.CompleteWithdraw) {
       if (dto.value >= TELEGRAM_THRESHOLD) {
         post = DepositTelegram(dto as unknown as EventDto)
       }
