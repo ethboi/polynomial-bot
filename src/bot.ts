@@ -7,7 +7,7 @@ import { Update } from 'telegraf/typings/core/types/typegram'
 import { TwitterClient } from './clients/twitterClient'
 import { TelegramClient } from './clients/telegramClient'
 import { defaultActivity } from './integrations/discord'
-import { optimismInfuraProvider } from './clients/ethersClient'
+import { alchemyProvider } from './clients/ethersClient'
 import { TrackEvents } from './event/blockEvent'
 import RpcClient from './clients/client'
 import { GetApiData } from './integrations/contracts'
@@ -20,7 +20,7 @@ let twitterClient: TwitterApi
 let telegramClient: Telegraf<Context<Update>>
 
 export async function goBot() {
-  const rpcClient = new RpcClient(optimismInfuraProvider)
+  const rpcClient = new RpcClient(alchemyProvider)
   await Promise.all([InitGlobals(), InitClients()])
   //await TrackYield(discordClient, telegramClient, twitterClient)
   //await TrackStats(discordClient, telegramClient, twitterClient)
