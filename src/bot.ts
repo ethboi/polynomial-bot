@@ -24,7 +24,7 @@ export async function goBot() {
   await Promise.all([InitGlobals(), InitClients()])
   //await TrackYield(discordClient, telegramClient, twitterClient)
   //await TrackStats(discordClient, telegramClient, twitterClient)
-  await TrackYield(discordClient, telegramClient, twitterClient)
+  // await TrackYield(discordClient, telegramClient, twitterClient)
 
   await TrackEvents(discordClient, telegramClient, twitterClient, rpcClient)
   ScheduledJobs(discordClient, telegramClient, twitterClient)
