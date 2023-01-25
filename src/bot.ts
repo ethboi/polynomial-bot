@@ -13,7 +13,6 @@ import RpcClient from './clients/client'
 import { GetApiData } from './integrations/contracts'
 import { GetPrices } from './integrations/coingecko'
 import { ScheduledJobs } from './schedule'
-import { TrackYield, TrackStats } from './event/vault'
 
 let discordClient: Client<boolean>
 let twitterClient: TwitterApi
@@ -22,10 +21,6 @@ let telegramClient: Telegraf<Context<Update>>
 export async function goBot() {
   const rpcClient = new RpcClient(alchemyProvider)
   await Promise.all([InitGlobals(), InitClients()])
-  //await TrackYield(discordClient, telegramClient, twitterClient)
-  //await TrackStats(discordClient, telegramClient, twitterClient)
-  // await TrackYield(discordClient, telegramClient, twitterClient)
-
   await TrackEvents(discordClient, telegramClient, twitterClient, rpcClient)
   ScheduledJobs(discordClient, telegramClient, twitterClient)
 }
@@ -38,7 +33,9 @@ async function InitGlobals() {
 }
 
 async function InitClients() {
-  await Promise.all([SetUpDiscord(), SetUpTwitter(), SetUpTelegram()])
+  SetUpTwitter()
+  SetUpTelegram()
+  await SetUpDiscord()
 }
 
 export async function SetUpDiscord() {
@@ -47,18 +44,19 @@ export async function SetUpDiscord() {
     discordClient.on('ready', async (client) => {
       console.debug('Discord bot is online!')
     })
-    Promise.all([discordClient.login(DISCORD_ACCESS_TOKEN), defaultActivity(discordClient)])
+    await discordClient.login(DISCORD_ACCESS_TOKEN)
+    defaultActivity(discordClient)
   }
 }
 
-export async function SetUpTwitter() {
+export function SetUpTwitter() {
   if (TWITTER_ENABLED) {
     twitterClient = TwitterClient
     twitterClient.readWrite
   }
 }
 
-export async function SetUpTelegram() {
+export function SetUpTelegram() {
   if (TELEGRAM_ENABLED) {
     telegramClient = TelegramClient
   }
