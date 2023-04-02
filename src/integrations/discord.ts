@@ -1,5 +1,5 @@
 import { ActivityType, Client, EmbedBuilder, TextChannel } from 'discord.js'
-import { TESTNET } from '../secrets'
+import { TESTNET } from '../config'
 import printObject from '../utils/printObject'
 
 export async function PostDiscord(embeds: EmbedBuilder[], client: Client<boolean>, channelName: string) {

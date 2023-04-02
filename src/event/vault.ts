@@ -8,7 +8,8 @@ import { TOKENS } from '../constants/tokenIds'
 import { VaultDto, VaultsDto } from '../types/EventDto'
 import { Vault } from '../types/polynomial'
 import fromBigNumber from '../utils/fromBigNumber'
-import { BroadCast, getPrice } from './common'
+import { BroadCast } from './common'
+import { GetPrice } from '../integrations/prices'
 
 // OLD VAULTS
 const excludedVaults = ['SETH_CALL_SELLING', 'SETH_PUT_SELLING', 'SETH_CALL_SELLING_QUOTE', 'GAMMA']
@@ -43,7 +44,7 @@ export async function TrackStats(
   VAULTS.map(async (vault) => {
     if (!excludedVaults.includes(vault.vaultId)) {
       const depositToken = TOKENS[vault.depositTokenAddress.toLowerCase()]
-      const price = getPrice(depositToken[0] as string)
+      const price = GetPrice(depositToken[0] as string)
       const decimals = depositToken[2] as number
       const totalFunds = fromBigNumber(vault.totalFunds as unknown as BigNumber, decimals)
       const usedFunds = fromBigNumber(vault.usedFunds as unknown as BigNumber, decimals)

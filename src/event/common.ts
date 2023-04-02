@@ -14,17 +14,13 @@ import {
   TELEGRAM_THRESHOLD,
   DISCORD_ENABLED,
   DISCORD_THRESHOLD,
-} from '../secrets'
+  TELEGRAM_CHANNEL,
+} from '../config'
 import { BaseEvent, EventDto, VaultDto, VaultsDto } from '../types/EventDto'
 import { DepositTwitter, DepositTelegram, DepositDiscord } from '../templates/deposit'
 import { VaultStatsDiscord, VaultStatsTwitter } from '../templates/vaultStats'
 import { VaultYieldDiscord, VaultYieldTelegram, VaultYieldTwitter } from '../templates/vaultYield'
 import { media } from '../constants/twitter'
-
-export function getPrice(coingeckoId: string): number {
-  const price = TOKEN_PRICES[coingeckoId] as unknown as number
-  return price
-}
 
 export function getImage(vaultId: string) {
   switch (vaultId) {
@@ -69,7 +65,7 @@ export async function BroadCast<T extends BaseEvent>(
     }
 
     //DEPOSITS
-    if (dto.value >= TWITTER_THRESHOLD) {
+    if (dto.value >= Number(TWITTER_THRESHOLD)) {
       if (dto.eventType == EventType.Deposit) {
         post = DepositTwitter(dto as unknown as EventDto)
       }
@@ -97,12 +93,12 @@ export async function BroadCast<T extends BaseEvent>(
 
     // DEPOSITS
     if (dto.eventType === EventType.Deposit || dto.eventType == EventType.CompleteWithdraw) {
-      if (dto.value >= TELEGRAM_THRESHOLD) {
+      if (dto.value >= Number(TELEGRAM_THRESHOLD)) {
         post = DepositTelegram(dto as unknown as EventDto)
       }
     }
     if (post != '') {
-      await PostTelegram(post, disablePreview, telegramClient)
+      await PostTelegram(post, telegramClient, TELEGRAM_CHANNEL, disablePreview)
     }
   }
 
@@ -124,7 +120,7 @@ export async function BroadCast<T extends BaseEvent>(
 
     //DEPOSITS
     if (dto.eventType === EventType.Deposit || dto.eventType == EventType.CompleteWithdraw) {
-      if (dto.value >= DISCORD_THRESHOLD) {
+      if (dto.value >= Number(DISCORD_THRESHOLD)) {
         embed = [DepositDiscord(dto as unknown as EventDto)]
         channel = dto.eventType === EventType.Deposit ? DiscordChannels.Deposit : DiscordChannels.Withdrawal
       }

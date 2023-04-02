@@ -2,7 +2,7 @@ import { Client } from 'discord.js'
 import { Telegraf, Context } from 'telegraf'
 import { Update } from 'telegraf/typings/core/types/typegram'
 import { TwitterApi } from 'twitter-api-v2'
-import { getPrice, getImage, BroadCast } from './common'
+import { getImage, BroadCast } from './common'
 import { EventType } from '../constants/eventType'
 import { GetEns } from '../integrations/ens'
 import { EventDto } from '../types/EventDto'
@@ -11,6 +11,7 @@ import { Event as GenericEvent } from 'ethers'
 import { ProcessWithdrawalEvent } from '../contracts/typechain/V2'
 import { V2__factory } from '../contracts/typechain/factories'
 import { TOKENS } from '../constants/tokenIds'
+import { GetPrice } from '../integrations/prices'
 
 export async function TrackWithdraws(
   discordClient: Client<boolean>,
@@ -33,7 +34,7 @@ export async function TrackWithdraws(
     return
   }
 
-  const price = getPrice(depositToken[0] as string)
+  const price = GetPrice(vault.depositTokenAddress.toLowerCase())
   const amt = fromBigNumber(event.args.amount)
   const value = price * amt
 

@@ -4,7 +4,7 @@ import { Telegraf, Context } from 'telegraf'
 import { Update } from 'telegraf/typings/core/types/typegram'
 import { TwitterApi } from 'twitter-api-v2'
 import { TrackYield } from '../event/vault'
-import { GetPrices } from '../integrations/coingecko'
+import { GetPrices } from '../integrations/prices'
 import { GetApiData } from '../integrations/contracts'
 
 export function ScheduledJobs(

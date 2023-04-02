@@ -1,4 +1,4 @@
-import { DISCORD_ACCESS_TOKEN, DISCORD_ENABLED, TELEGRAM_ENABLED, TWITTER_ENABLED } from './secrets'
+import { DISCORD_ACCESS_TOKEN, DISCORD_ENABLED, TELEGRAM_ENABLED, TWITTER_ENABLED } from './config'
 import { DiscordClient } from './clients/discordClient'
 import { Client } from 'discord.js'
 import { TwitterApi } from 'twitter-api-v2'
@@ -11,14 +11,14 @@ import { alchemyProvider } from './clients/ethersClient'
 import { TrackEvents } from './event/blockEvent'
 import RpcClient from './clients/client'
 import { GetApiData } from './integrations/contracts'
-import { GetPrices } from './integrations/coingecko'
 import { ScheduledJobs } from './schedule'
+import { GetPrices } from './integrations/prices'
 
 let discordClient: Client<boolean>
 let twitterClient: TwitterApi
 let telegramClient: Telegraf<Context<Update>>
 
-export async function goBot() {
+export async function Run() {
   const rpcClient = new RpcClient(alchemyProvider)
   await Promise.all([InitGlobals(), InitClients()])
   await TrackEvents(discordClient, telegramClient, twitterClient, rpcClient)
@@ -29,7 +29,8 @@ async function InitGlobals() {
   global.ENS = {}
   global.VAULT_ADDRESSES = []
   global.TOKEN_PRICES = {}
-  await Promise.all([GetPrices(), GetApiData()])
+  await GetApiData()
+  await GetPrices()
 }
 
 async function InitClients() {

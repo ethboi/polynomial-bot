@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
-import { INFURA_ID_OPTIMISM } from '../secrets'
+import { INFURA_ID_OPTIMISM } from '../config'
 
 export default class RpcClient {
   chainId: number

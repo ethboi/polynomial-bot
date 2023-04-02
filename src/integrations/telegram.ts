@@ -1,12 +1,11 @@
-import { TELEGRAM_CHANNEL, TESTNET } from '../secrets'
+import { TELEGRAM_CHANNEL, TESTNET } from '../config'
 import { Context, Telegraf } from 'telegraf'
-import { Update } from 'telegraf/typings/core/types/typegram'
 
 export async function PostTelegram(
   post: string,
-  disablePreview = true,
-  telegramClient: Telegraf<Context<Update>>,
+  telegramClient: Telegraf<Context>,
   channel: string = TELEGRAM_CHANNEL,
+  disablePreview = true,
 ) {
   if (TESTNET) {
     console.log(post)
@@ -16,7 +15,6 @@ export async function PostTelegram(
         parse_mode: 'HTML',
         disable_web_page_preview: disablePreview,
       })
-      //console.log(response)
     } catch (e: any) {
       console.log(e)
     }

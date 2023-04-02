@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { INFURA_ID, INFURA_ID_OPTIMISM, ALCHEMY_ID } from '../secrets'
+import { INFURA_ID, INFURA_ID_OPTIMISM, ALCHEMY_ID } from '../config'
 
 const network = 'mainnet'
 export const mainNetInfuraProvider = new ethers.providers.InfuraProvider(network, INFURA_ID)

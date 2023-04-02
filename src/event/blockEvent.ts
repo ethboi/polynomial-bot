@@ -1,4 +1,4 @@
-import { TESTNET } from '../secrets'
+import { TESTNET } from '../config'
 import { Client } from 'discord.js'
 import { BlockEvent } from '../event'
 import { Context, Telegraf } from 'telegraf'
